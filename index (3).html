@@ -1,0 +1,512 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 10 Keyboard Shortcuts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(-45deg, #1a202c, #2d3748, #4a5568, #2d3748);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: -1;
+        }
+        .shortcut-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .shortcut-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(96, 165, 250, 0.3);
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #60a5fa;
+        }
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="text-gray-100 font-sans">
+    <div class="overlay"></div>
+
+    <!-- Header -->
+    <header class="bg-gray-900 shadow-lg py-6">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl font-bold text-blue-400 tracking-tight">Windows 10 Keyboard Shortcuts</h1>
+            <p class="text-lg text-gray-400 mt-4">Aesthetic Guide to Boost Your Productivity</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="sticky-nav bg-gray-800 py-4 shadow">
+        <div class="container mx-auto px-6">
+            <ul class="flex flex-wrap justify-center space-x-6">
+                <li><a href="#general" class="nav-link text-gray-300 hover:text-blue-400" aria-label="General Shortcuts">General</a></li>
+                <li><a href="#windows-key" class="nav-link text-gray-300 hover:text-blue-400" aria-label="Windows Key Shortcuts">Windows Key</a></li>
+                <li><a href="#window-management" class="nav-link text-gray-300 hover:text-blue-400" aria-label="Window Management Shortcuts">Window Management</a></li>
+                <li><a href="#file-explorer" class="nav-link text-gray-300 hover:text-blue-400" aria-label="File Explorer Shortcuts">File Explorer</a></li>
+                <li><a href="#accessibility" class="nav-link text-gray-300 hover:text-blue-400" aria-label="Accessibility Shortcuts">Accessibility</a></li>
+                <li><a href="#system" class="nav-link text-gray-300 hover:text-blue-400" aria-label="System Shortcuts">System</a></li>
+                <li><a href="#command-prompt" class="nav-link text-gray-300 hover:text-blue-400" aria-label="Command Prompt Shortcuts">Command Prompt</a></li>
+                <li><a href="#edge-browser" class="nav-link text-gray-300 hover:text-blue-400" aria-label="Edge Browser Shortcuts">Edge Browser</a></li>
+                <li><a href="#miscellaneous" class="nav-link text-gray-300 hover:text-blue-400" aria-label="Miscellaneous Shortcuts">Miscellaneous</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+        <!-- General Shortcuts -->
+        <section id="general" class="mb-12">
+            <h2 class="text-3xl font-semibold text-blue-300 mb-6">General Shortcuts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + C</h3>
+                    <p class="text-gray-400 mt-2">Copy selected text or item to clipboard</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + X</h3>
+                    <p class="text-gray-400 mt-2">Cut selected text or item to clipboard</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + V</h3>
+                    <p class="text-gray-400 mt-2">Paste clipboard contents</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Z</h3>
+                    <p class="text-gray-400 mt-2">Undo the last action</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Y</h3>
+                    <p class="text-gray-400 mt-2">Redo the last undone action</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Alt + Tab</h3>
+                    <p class="text-gray-400 mt-2">Switch between open applications</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Alt + F4</h3>
+                    <p class="text-gray-400 mt-2">Close the active window or application</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + S</h3>
+                    <p class="text-gray-400 mt-2">Save the current file or document</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + P</h3>
+                    <p class="text-gray-400 mt-2">Print the current document or page</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + A</h3>
+                    <p class="text-gray-400 mt-2">Select all items or text in the active window</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + D</h3>
+                    <p class="text-gray-400 mt-2">Delete selected item and move it to the Recycle Bin</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Shift + Esc</h3>
+                    <p class="text-gray-400 mt-2">Open Task Manager directly</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Alt + Enter</h3>
+                    <p class="text-gray-400 mt-2">Display properties for the selected item</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">F2</h3>
+                    <p class="text-gray-400 mt-2">Rename the selected item in File Explorer</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">F5</h3>
+                    <p class="text-gray-400 mt-2">Refresh the active window</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Windows Key Shortcuts -->
+        <section id="windows-key" class="mb-12">
+            <h2 class="text-3xl font-semibold text-blue-300 mb-6">Windows Key Shortcuts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win</h3>
+                    <p class="text-gray-400 mt-2">Open or close the Start menu</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + A</h3>
+                    <p class="text-gray- makeover mt-2">Open Action Center</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + D</h3>
+                    <p class="text-gray-400 mt-2">Show or hide the desktop</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + E</h3>
+                    <p class="text-gray-400 mt-2">Open File Explorer</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + I</h3>
+                    <p class="text-gray-400 mt-2">Open Settings app</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + L</h3>
+                    <p class="text-gray-400 mt-2">Lock the PC or switch accounts</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + M</h3>
+                    <p class="text-gray-400 mt-2">Minimize all windows</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Shift + M</h3>
+                    <p class="text-gray-400 mt-2">Restore minimized windows</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + R</h3>
+                    <p class="text-gray-400 mt-2">Open the Run dialog box</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + S</h3>
+                    <p class="text-gray-400 mt-2">Open Search</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + T</h3>
+                    <p class="text-gray-400 mt-2">Cycle through apps on the taskbar</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Tab</h3>
+                    <p class="text-gray-400 mt-2">Open Task View</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Ctrl + D</h3>
+                    <p class="text-gray-400 mt-2">Create a new virtual desktop</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Ctrl + Left/Right Arrow</h3>
+                    <p class="text-gray-400 mt-2">Switch between virtual desktops</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Ctrl + F4</h3>
+                    <p class="text-gray-400 mt-2">Close the current virtual desktop</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Pause</h3>
+                    <p class="text-gray-400 mt-2">Open System Properties</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + P</h3>
+                    <p class="text-gray-400 mt-2">Open Project (display options)</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + H</h3>
+                    <p class="text-gray-400 mt-2">Open the Share pane</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + K</h3>
+                    <p class="text-gray-400 mt-2">Open the Connect pane</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + G</h3>
+                    <p class="text-gray-400 mt-2">Open Game Bar</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + X</h3>
+                    <p class="text-gray-400 mt-2">Open the Quick Link menu</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Number (1–9)</h3>
+                    <p class="text-gray-400 mt-2">Open/switch to taskbar app</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Shift + Number (1–9)</h3>
+                    <p class="text-gray-400 mt-2">Open new instance of taskbar app</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Alt + Number (1–9)</h3>
+                    <p class="text-gray-400 mt-2">Open jump list for taskbar app</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Window Management -->
+        <section id="window-management" class="mb-12">
+            <h2 class="text-3xl font-semibold text-blue-300 mb-6">Window Management</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Left Arrow</h3>
+                    <p class="text-gray-400 mt-2">Snap window to left half</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Right Arrow</h3>
+                    <p class="text-gray-400 mt-2">Snap to right half</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Up Arrow</h3>
+                    <p class="text-gray-400 mt-2">Maximize window</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Down Arrow</h3>
+                    <p class="text-gray-400 mt-2">Minimize/restore window</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Shift + Left/Right Arrow</h3>
+                    <p class="text-gray-400 mt-2">Move window to another monitor</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Alt + Space</h3>
+                    <p class="text-gray-400 mt-2">Open window system menu</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- File Explorer -->
+        <section id="file-explorer" class="mb-12">
+            <h2 class="text-3xl font-semibold text-blue-300 mb-6">File Explorer Shortcuts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Alt + D or Ctrl + L</h3>
+                    <p class="text-gray-400 mt-2">Select the address bar</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + E</h3>
+                    <p class="text-gray-400 mt-2">Select the search bar</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + N</h3>
+                    <p class="text-gray-400 mt-2">Open new File Explorer window</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + W</h3>
+                    <p class="text-gray-400 mt-2">Close File Explorer window</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Shift + N</h3>
+                    <p class="text-gray-400 mt-2">Create new folder</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Alt + Up Arrow</h3>
+                    <p class="text-gray-400 mt-2">Go up one folder level</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Alt + Left/Right Arrow</h3>
+                    <p class="text-gray-400 mt-2">Navigate back/forward</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Mouse Scroll</h3>
+                    <p class="text-gray-400 mt-2">Change view</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Accessibility -->
+        <section id="accessibility" class="mb-12">
+            <h2 class="text-3xl font-semibold text-blue-300 mb-6">Accessibility Shortcuts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Plus (+)</h3>
+                    <p class="text-gray-400 mt-2">Open Magnifier and zoom in</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Minus (-)</h3>
+                    <p class="text-gray-400 mt-2">Zoom out with Magnifier</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Esc</h3>
+                    <p class="text-gray-400 mt-2">Close Magnifier</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Ctrl + M</h3>
+                    <p class="text-gray-400 mt-2">Open Ease of Access settings</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Left Alt + Left Shift + Print Screen</h3>
+                    <p class="text-gray-400 mt-2">Toggle High Contrast mode</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Left Alt + Left Shift + Num Lock</h3>
+                    <p class="text-gray-400 mt-2">Toggle Mouse Keys</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- System and Settings -->
+        <section id="system" class="mb-12">
+            <h2 class="text-3xl font-semibold text-blue-300 mb-6">System Shortcuts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Alt + Del</h3>
+                    <p class="text-gray-400 mt-2">Open security options</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Ctrl + Shift + B</h3>
+                    <p class="text-gray-400 mt-2">Reset graphics driver</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + PrtSc</h3>
+                    <p class="text-gray-400 mt-2">Save screenshot to Pictures</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">PrtSc</h3>
+                    <p class="text-gray-400 mt-2">Copy screenshot to clipboard</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Shift + S</h3>
+                    <p class="text-gray-400 mt-2">Open Snip & Sketch</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Command Prompt -->
+        <section id="command-prompt" class="mb-12">
+            <h2 class="text-3xl font-semibold text-blue-300 mb-6">Command Prompt Shortcuts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + C</h3>
+                    <p class="text-gray-400 mt-2">Copy selected text</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + V</h3>
+                    <p class="text-gray-400 mt-2">Paste text</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + M</h3>
+                    <p class="text-gray-400 mt-2">Enter Mark mode</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Up/Down Arrow</h3>
+                    <p class="text-gray-400 mt-2">Scroll command history</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Alt + F7</h3>
+                    <p class="text-gray-400 mt-2">Clear command history</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Edge Browser -->
+        <section id="edge-browser" class="mb-12">
+            <h2 class="text-3xl font-semibold text-blue-300 mb-6">Edge Browser Shortcuts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + T</h3>
+                    <p class="text-gray-400 mt-2">Open new tab</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + W</h3>
+                    <p class="text-gray-400 mt-2">Close current tab</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Shift + T</h3>
+                    <p class="text-gray-400 mt-2">Reopen last closed tab</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Tab</h3>
+                    <p class="text-gray-400 mt-2">Switch to next tab</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Shift + N</h3>
+                    <p class="text-gray-400 mt-2">Open InPrivate window</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">F12</h3>
+                    <p class="text-gray-400 mt-2">Open Developer Tools</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Miscellaneous -->
+        <section id="miscellaneous" class="mb-12">
+            <h2 class="text-3xl font-semibold text-blue-300 mb-6">Miscellaneous Shortcuts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Ctrl + Shift</h3>
+                    <p class="text-gray-400 mt-2">Switch keyboard layout</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Space</h3>
+                    <p class="text-gray-400 mt-2">Switch input language</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Period (.) or Win + Semicolon (;)</h3>
+                    <p class="text-gray-400 mt-2">Open emoji picker</p>
+                </div>
+                <div class="shortcut-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-medium text-gray-300">Win + Comma (,)</h3>
+                    <p class="text-gray-400 mt-2">Peek at desktop</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 p-6">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-400">Created by Grok | Powered by xAI | © 2025</p>
+        </div>
+    </footer>
+</body>
+</html>
