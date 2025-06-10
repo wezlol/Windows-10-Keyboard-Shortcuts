@@ -1,0 +1,191 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 10 Shortcuts Instructions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(-45deg, #1a202c, #2d3748, #4a5568, #2d3748);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            position: relative;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: -1;
+        }
+        .content-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .content-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(96, 165, 250, 0.3);
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #60a5fa;
+        }
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .instructions {
+            line-height: 1.6;
+            user-select: text;
+        }
+        .instructions ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+        }
+        .instructions ul ul {
+            list-style-type: circle;
+            margin-left: 1.5rem;
+        }
+        .instructions code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body class="text-gray-100 font-sans">
+    <div class="overlay"></div>
+
+    <!-- Header -->
+    <header class="bg-gray-900 shadow-lg py-6" role="banner">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl font-bold text-blue-400 tracking-tight">Windows 10 Shortcuts Instructions</h1>
+            <p class="text-lg text-gray-400 mt-4">Guide for Generating an Aesthetic Shortcuts Page</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="sticky-nav bg-gray-800 py-4 shadow" role="navigation">
+        <div class="container mx-auto px-6">
+            <ul class="flex flex-wrap justify-center space-x-6">
+                <li><a href="#instructions" class="nav-link text-gray-300 hover:text-blue-400" aria-label="Instructions Content">Instructions</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+        <!-- Instructions Section -->
+        <section id="instructions" class="mb-12">
+            <h2 class="text-3xl font-semibold text-blue-300 mb-6">Instructions</h2>
+            <div class="content-card bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="instructions text-gray-400">
+                    <p>Create an HTML5 page that lists all Windows 10 keyboard shortcuts in an aesthetic, modern design. The page should use Tailwind CSS (via CDN) for styling and include the following features:</p>
+                    <ul>
+                        <li>
+                            <strong>Content</strong>: Include a comprehensive list of Windows 10 keyboard shortcuts, organized into the following sections: General Shortcuts, Windows Key Shortcuts, Window Management, File Explorer Shortcuts, Accessibility Shortcuts, System Shortcuts, Command Prompt Shortcuts, Edge Browser Shortcuts, and Miscellaneous Shortcuts. Ensure the shortcuts match the standard Windows 10 key bindings (e.g., <code>Ctrl + C</code> for copy, <code>Win + D</code> for show/hide desktop) with accurate descriptions.
+                        </li>
+                        <li>
+                            <strong>Design</strong>:
+                            <ul>
+                                <li><strong>Background</strong>: Use an animated gradient background that transitions smoothly between dark colors (<code>#1a202c</code>, <code>#2d3748</code>, <code>#4a5568</code>, <code>#2d3748</code>) using CSS keyframes. Add a semi-transparent overlay (<code>rgba(0, 0, 0, 0.2)</code>) to ensure text readability.</li>
+                                <li><strong>Header</strong>: Include a centered header with a bold, blue (<code>text-blue-400</code>) title ("Windows 10 Keyboard Shortcuts") and a subtitle in gray (<code>text-gray-400</code>).</li>
+                                <li><strong>Navigation</strong>: Create a sticky navigation bar with a blurred background (<code>backdrop-filter: blur(12px)</code>) and semi-transparent dark color (<code>rgba(31, 41, 55, 0.8)</code>). Include links to each section with hover effects (change to <code>text-blue-400</code>) and ARIA labels for accessibility.</li>
+                                <li><strong>Shortcut Cards</strong>: Display shortcuts in a responsive grid (1 column on mobile, 2 on medium screens, 3 on large screens) using glassmorphism-style cards (<code>background: rgba(255, 255, 255, 0.05)</code>, <code>backdrop-filter: blur(10px)</code>, subtle border). Each card should have a hover effect (slight scale, translateY, and blue glow shadow).</li>
+                                <li><strong>Typography</strong>: Use a clean sans-serif font, with section headings in <code>text-blue-300</code> and card content in <code>text-gray-300</code> (titles) and <code>text-gray-400</code> (descriptions).</li>
+                                <li><strong>Footer</strong>: Include a simple footer with a centered message ("Created by Grok | Powered by xAI | © 2025") in <code>text-gray-400</code>.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Bug Fixes</strong>:
+                            <ul>
+                                <li>Ensure all HTML is valid, with no malformed tags (e.g., no incorrect <code>&lt;p&gt;</code> attributes or unclosed tags).</li>
+                                <li>Use consistent formatting for shortcut cards, avoiding redundant nesting or typos (e.g., use <code>Win + PrtSc</code> consistently, not <code>Win + PrtScn</code>).</li>
+                                <li>Ensure navigation links have consistent styling (e.g., all start as <code>text-gray-300</code>).</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Accessibility</strong>:
+                            <ul>
+                                <li>Add ARIA labels to navigation links for screen reader compatibility.</li>
+                                <li>Ensure sufficient contrast ratios for text readability.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Responsive Design</strong>: Use Tailwind CSS classes to make the layout responsive across mobile, tablet, and desktop devices.
+                        </li>
+                        <li>
+                            <strong>Output</strong>: Provide the complete HTML5 code in a single file, ready to be saved as <code>index.html</code> and opened in a browser. Do not include external dependencies beyond the Tailwind CSS CDN.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 p-6">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-400">Created by Grok | Powered by xAI | © 2025</p>
+        </div>
+    </footer>
+</body>
+</html>
